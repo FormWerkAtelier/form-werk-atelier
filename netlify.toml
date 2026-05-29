@@ -1,0 +1,70 @@
+# ============================================
+# Netlify-Konfiguration für Form Werk Atelier
+# ============================================
+
+[build]
+  publish = "."
+
+# ---- Sicherheits-Header ----
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Schutz gegen Clickjacking
+    X-Frame-Options              = "SAMEORIGIN"
+    # Verhindert MIME-Sniffing
+    X-Content-Type-Options       = "nosniff"
+    # Referrer schonend übermitteln
+    Referrer-Policy              = "strict-origin-when-cross-origin"
+    # Permissions-Policy (deaktiviert nicht genutzte APIs)
+    Permissions-Policy           = "camera=(), microphone=(), geolocation=()"
+    # HTTPS erzwingen (1 Jahr)
+    Strict-Transport-Security    = "max-age=31536000; includeSubDomains; preload"
+    # Content-Security-Policy: Erlaubt PayPal-SDK, Formspree-Endpoint, Supabase, eigene Quellen
+    Content-Security-Policy      = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.paypal.com https://www.paypalobjects.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://formspree.io https://www.paypal.com https://api-m.paypal.com https://api-m.sandbox.paypal.com https://*.supabase.co wss://*.supabase.co; frame-src https://www.paypal.com https://www.sandbox.paypal.com; form-action 'self' https://formspree.io;"
+
+# ---- Cache-Header für statische Assets ----
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ---- Saubere URLs ohne .html-Endung ----
+[[redirects]]
+  from = "/shop"
+  to   = "/shop.html"
+  status = 200
+
+[[redirects]]
+  from = "/produkt"
+  to   = "/produkt.html"
+  status = 200
+
+[[redirects]]
+  from = "/warenkorb"
+  to   = "/warenkorb.html"
+  status = 200
+
+[[redirects]]
+  from = "/kasse"
+  to   = "/kasse.html"
+  status = 200
+
+[[redirects]]
+  from = "/kontakt"
+  to   = "/kontakt.html"
+  status = 200
+
+[[redirects]]
+  from = "/atelier"
+  to   = "/ueber-uns.html"
+  status = 200

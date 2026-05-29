@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Form Werk Atelier – Handgefertigte 3D-Objekte</title>
+  <meta name="description" content="Form Werk Atelier – Einzigartige 3D-gefertigte Objekte. Handwerk trifft moderne Technologie." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css?v=2" />
+</head>
+<body>
+
+  <!-- ====== HEADER ====== -->
+  <div data-fwa-header></div>
+
+  <!-- ====== HERO ====== -->
+  <section class="hero container">
+    <p class="hero__eyebrow">Form Werk Atelier</p>
+    <h1>Wo Material zur Form findet.</h1>
+    <p>
+      Einzigartige Objekte aus dem 3D-Atelier – mit Sorgfalt entworfen,
+      präzise gefertigt und mit Charakter ausgestattet.
+    </p>
+    <a href="shop.html" class="btn">Kollektion entdecken</a>
+  </section>
+
+  <!-- ====== USP / Werte ====== -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>Was uns besonders macht</h2>
+        <p>Drei Werte, die in jedem unserer Objekte stecken.</p>
+      </div>
+
+      <div class="features">
+        <div class="feature">
+          <div class="feature__icon">◇</div>
+          <h3>Eigenes Design</h3>
+          <p>Jedes Stück wird im Atelier entworfen – keine Standardware, sondern Charakter.</p>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">⚙</div>
+          <h3>Präzise Fertigung</h3>
+          <p>Moderne 3D-Verfahren treffen auf handwerkliche Nachbearbeitung.</p>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">✦</div>
+          <h3>In kleiner Auflage</h3>
+          <p>Limitierte Stückzahlen statt Massenproduktion – nachhaltig und persönlich.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Highlight-Produkte (Platzhalter) ====== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>Aktuelle Stücke</h2>
+        <p>Eine Auswahl aus unserer aktuellen Kollektion.</p>
+      </div>
+
+      <div class="product-grid" id="featuredProducts">
+        <!-- Wird per JavaScript dynamisch aus data/products.json befüllt -->
+      </div>
+
+      <div class="section-cta">
+        <a href="shop.html" class="btn btn--outline">Zum gesamten Shop</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== FOOTER ====== -->
+  <div data-fwa-footer></div>
+
+  <script src="data/products.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/products.js"></script>
+</body>
+</html>

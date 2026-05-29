@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop – Form Werk Atelier</title>
+  <meta name="description" content="Entdecke die aktuelle Kollektion von Form Werk Atelier – 3D-gefertigtes Zubehör für Mähroboter, Darts und mehr." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css?v=2" />
+</head>
+<body>
+
+  <!-- ====== HEADER ====== -->
+  <div data-fwa-header></div>
+
+  <!-- ====== PAGE TITLE ====== -->
+  <section class="hero container" style="padding: 4rem 0 2.5rem;">
+    <p class="hero__eyebrow" id="shopEyebrow">Kollektion</p>
+    <h1 id="shopTitle">Alle Produkte</h1>
+    <p id="shopDescription">
+      Eine Auswahl aus dem Form Werk Atelier – funktionale Objekte mit Charakter.
+    </p>
+  </section>
+
+  <!-- ====== KATEGORIE-FILTER ====== -->
+  <section class="container">
+    <div class="filter-bar" id="filterBar">
+      <!-- wird per JS befüllt -->
+    </div>
+  </section>
+
+  <!-- ====== PRODUKT-GRID ====== -->
+  <section class="section">
+    <div class="container">
+      <div class="product-grid" id="productGrid">
+        <!-- wird per JS befüllt -->
+      </div>
+      <p id="emptyMessage" class="empty-message" style="display:none;">
+        In dieser Kategorie sind aktuell noch keine Produkte verfügbar.
+      </p>
+    </div>
+  </section>
+
+  <!-- ====== FOOTER ====== -->
+  <div data-fwa-footer></div>
+
+  <script src="data/products.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/products.js"></script>
+</body>
+</html>

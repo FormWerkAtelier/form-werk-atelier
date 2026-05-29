@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kontakt – Form Werk Atelier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=2" />
+</head>
+<body>
+  <div data-fwa-header></div>
+
+  <section class="hero container" style="padding: 4rem 0 2rem;">
+    <p class="hero__eyebrow">Kontakt</p>
+    <h1>Schreib uns</h1>
+    <p>Fragen zu Produkten, Sonderwünsche, Pressekontakt – wir antworten gern.</p>
+  </section>
+
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="contact-grid">
+
+        <!-- Kontaktdaten -->
+        <aside class="contact-info">
+          <h3>Form Werk Atelier</h3>
+          <p>Adrian Hilgert<br>
+             Aspisheimerstr. 16<br>
+             55457 Horrweiler<br>
+             Deutschland</p>
+
+          <p><strong>E-Mail:</strong> <a href="mailto:FormWerkAtelier@gmail.com">FormWerkAtelier@gmail.com</a><br>
+             <strong>Telefon:</strong> <a href="tel:+4915738583863">+49 1573 8583863</a></p>
+
+          <p><strong>Geschäftszeiten:</strong><br>
+             Montag–Freitag, 9–17 Uhr</p>
+        </aside>
+
+        <!-- Kontaktformular -->
+        <form id="contactForm" class="checkout-form" novalidate>
+          <label>Dein Name *
+            <input name="name" type="text" required autocomplete="name" />
+          </label>
+
+          <label>Deine E-Mail *
+            <input name="email" type="email" required autocomplete="email" />
+          </label>
+
+          <label>Betreff *
+            <input name="betreff" type="text" required />
+          </label>
+
+          <label>Deine Nachricht *
+            <textarea name="nachricht" rows="6" required></textarea>
+          </label>
+
+          <label class="check">
+            <input type="checkbox" name="datenschutz" required />
+            Ich habe die <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a>
+            gelesen und stimme der Verarbeitung meiner Daten zu.
+          </label>
+
+          <!-- Honeypot -->
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"
+                 style="position:absolute; left:-9999px; opacity:0;" />
+
+          <button type="submit" class="btn">Nachricht senden</button>
+          <p id="contactResult" class="contact-result" style="display:none;"></p>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <div data-fwa-footer></div>
+
+  <script src="data/products.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    (function () {
+      const form = document.getElementById('contactForm');
+      const result = document.getElementById('contactResult');
+      if (!form) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+
+        const endpoint = window.FWA_DATA?.config?.formspreeEndpoint;
+        const fd = new FormData(form);
+        const payload = {};
+        fd.forEach((v, k) => payload[k] = v);
+
+        if (!endpoint || endpoint.includes('DEINE_FORM_ID')) {
+          result.style.display = 'block';
+          result.style.color = '#c0392b';
+          result.textContent = 'Formspree-Endpoint ist noch nicht konfiguriert. Bitte trage ihn in data/products.js ein.';
+          return;
+        }
+
+        try {
+          await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ ...payload, _type: 'Kontaktanfrage' })
+          });
+          form.reset();
+          result.style.display = 'block';
+          result.style.color = 'var(--color-accent)';
+          result.textContent = '✓ Vielen Dank! Wir antworten so schnell wie möglich.';
+        } catch (err) {
+          result.style.display = 'block';
+          result.style.color = '#c0392b';
+          result.textContent = 'Die Nachricht konnte nicht gesendet werden. Bitte versuche es später erneut.';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

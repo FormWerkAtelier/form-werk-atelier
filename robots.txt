@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Privates / Service-Pfade explizit zulassen (Empfehlung für Shops)
+Disallow: /warenkorb.html
+Disallow: /kasse.html
+
+Sitemap: https://www.form-werk-atelier.de/sitemap.xml

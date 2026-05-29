@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Konto erstellen – Form Werk Atelier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=2" />
+</head>
+<body>
+  <div data-fwa-header></div>
+
+  <section class="hero container" style="padding: 4rem 0 2rem;">
+    <p class="hero__eyebrow">Konto</p>
+    <h1>Kostenlos registrieren</h1>
+    <p>Mit einem Konto siehst du deine Bestellhistorie und musst die Adresse nicht erneut eintippen.</p>
+  </section>
+
+  <section class="section">
+    <div class="container container--narrow">
+
+      <div class="auth-card">
+        <form id="registerForm" class="checkout-form" novalidate>
+
+          <p class="form-intro">
+            Felder mit <span class="required">*</span> sind Pflichtfelder.
+          </p>
+
+          <div class="form-group">
+            <h3 class="form-group__title">Persönliche Daten</h3>
+
+            <div class="form-row">
+              <label>Vorname <span class="required">*</span>
+                <input name="vorname" type="text" required autocomplete="given-name" />
+              </label>
+              <label>Nachname <span class="required">*</span>
+                <input name="nachname" type="text" required autocomplete="family-name" />
+              </label>
+            </div>
+
+            <label>E-Mail-Adresse <span class="required">*</span>
+              <input name="email" type="email" required autocomplete="email" />
+              <small class="form-hint">An diese Adresse senden wir die Bestätigungs-Mail.</small>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <h3 class="form-group__title">Passwort wählen</h3>
+
+            <label>Passwort <span class="required">*</span>
+              <input name="password" type="password" required minlength="8" autocomplete="new-password" />
+              <small class="form-hint">Mindestens 8 Zeichen. Empfohlen: Buchstaben, Zahlen und Sonderzeichen mischen.</small>
+            </label>
+
+            <label>Passwort wiederholen <span class="required">*</span>
+              <input name="password2" type="password" required minlength="8" autocomplete="new-password" />
+            </label>
+          </div>
+
+          <div class="form-group">
+            <h3 class="form-group__title">Einwilligungen</h3>
+
+            <label class="check">
+              <input type="checkbox" name="datenschutz" required />
+              <span>Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a> und <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a>. <span class="required">*</span></span>
+            </label>
+
+            <label class="check">
+              <input type="checkbox" name="newsletter" />
+              <span>Newsletter abonnieren <small class="form-hint" style="margin-left:0; display:inline;">(optional)</small></span>
+            </label>
+          </div>
+
+          <p id="registerResult" class="form-message" style="display:none;"></p>
+
+          <button type="submit" class="btn btn--full">Konto erstellen</button>
+
+        </form>
+      </div>
+
+      <p style="margin-top:1.5rem; text-align:center; font-size:0.92rem; color: var(--color-text-soft);">
+        Du hast schon ein Konto? <a href="login.html">Hier anmelden</a>
+      </p>
+
+    </div>
+  </section>
+
+  <div data-fwa-footer></div>
+
+  <script src="data/products.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    (function () {
+      const form = document.getElementById('registerForm');
+      const result = document.getElementById('registerResult');
+      form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        const vorname = form.vorname.value.trim();
+        const nachname = form.nachname.value.trim();
+        const email = form.email.value.trim();
+        const password = form.password.value;
+        const password2 = form.password2.value;
+        const newsletter = form.newsletter.checked;
+
+        if (password !== password2) {
+          result.style.display = 'block';
+          result.className = 'form-message form-message--error';
+          result.textContent = 'Die Passwörter stimmen nicht überein.';
+          return;
+        }
+
+        result.style.display = 'block';
+        result.className = 'form-message';
+        result.textContent = 'Konto wird angelegt …';
+
+        if (!window.FWA_SUPABASE) await new Promise(r => window.addEventListener('fwa-supabase-ready', r, { once: true }));
+
+        const { data, error } = await window.FWA_Auth.signUp(email, password, { vorname, nachname });
+        if (error) {
+          result.className = 'form-message form-message--error';
+          result.textContent = 'Registrierung fehlgeschlagen: ' + (error.message || 'Unbekannter Fehler');
+          return;
+        }
+
+        await window.FWA_Auth.updateProfile({ vorname, nachname, newsletter }).catch(() => {});
+
+        result.className = 'form-message form-message--success';
+        result.innerHTML = '<strong>✓ Konto erfolgreich erstellt!</strong><br>'
+          + 'Bitte prüfe deine Mailbox und bestätige deine E-Mail-Adresse, '
+          + 'um dich anzumelden.';
+        form.reset();
+      });
+    })();
+  </script>
+</body>
+</html>

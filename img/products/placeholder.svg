@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#f0ece4"/>
+  <g fill="none" stroke="#cfc9bc" stroke-width="2.5">
+    <rect x="120" y="120" width="160" height="160" rx="8"/>
+    <circle cx="162" cy="162" r="16"/>
+    <path d="M126 268 L182 206 L222 248 L262 200 L274 214 L274 274 L126 274 Z"
+          fill="#cfc9bc" stroke="none"/>
+  </g>
+  <text x="200" y="330" text-anchor="middle"
+        font-family="Inter, -apple-system, sans-serif" font-size="13" fill="#9a9890"
+        letter-spacing="3">PRODUKTBILD FOLGT</text>
+</svg>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mein Konto – Form Werk Atelier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=2" />
+</head>
+<body>
+  <div data-fwa-header></div>
+
+  <section class="hero container" style="padding: 4rem 0 2rem;">
+    <p class="hero__eyebrow">Konto</p>
+    <h1 id="accountTitle">Mein Konto</h1>
+  </section>
+
+  <section class="section">
+    <div class="container">
+
+      <!-- Wenn nicht eingeloggt -->
+      <div id="loggedOutBlock" style="display:none;">
+        <p>Du bist nicht angemeldet.</p>
+        <p>
+          <a href="login.html" class="btn">Jetzt anmelden</a>
+          <a href="registrieren.html" class="btn btn--secondary">Konto erstellen</a>
+        </p>
+      </div>
+
+      <!-- Wenn eingeloggt -->
+      <div id="loggedInBlock" style="display:none;">
+        <div class="account-grid">
+
+          <!-- Stammdaten -->
+          <article class="account-card">
+            <h2>Stammdaten</h2>
+            <form id="profileForm" class="checkout-form">
+              <div class="checkout-form__grid">
+                <label>Vorname
+                  <input name="vorname" type="text" autocomplete="given-name" />
+                </label>
+                <label>Nachname
+                  <input name="nachname" type="text" autocomplete="family-name" />
+                </label>
+              </div>
+              <label>Straße + Hausnummer
+                <input name="strasse" type="text" autocomplete="street-address" />
+              </label>
+              <div class="checkout-form__grid">
+                <label>PLZ
+                  <input name="plz" type="text" autocomplete="postal-code" />
+                </label>
+                <label>Ort
+                  <input name="ort" type="text" autocomplete="address-level2" />
+                </label>
+              </div>
+              <label>Telefon
+                <input name="telefon" type="tel" autocomplete="tel" />
+              </label>
+              <label class="check">
+                <input type="checkbox" name="newsletter" />
+                Newsletter erhalten
+              </label>
+              <p id="profileResult" class="contact-result" style="display:none;"></p>
+              <button type="submit" class="btn">Speichern</button>
+            </form>
+
+            <p style="margin-top:1.5rem;">
+              <a href="#" id="logoutLink">Abmelden</a>
+              &nbsp;|&nbsp;
+              <a href="passwort-vergessen.html">Passwort ändern</a>
+            </p>
+          </article>
+
+          <!-- Bestellhistorie -->
+          <article class="account-card">
+            <h2>Bestellhistorie</h2>
+            <div id="ordersBlock">
+              <p>Bestellungen werden geladen …</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-fwa-footer></div>
+
+  <script src="data/products.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    (async function () {
+      if (!window.FWA_SUPABASE) await new Promise(r => window.addEventListener('fwa-supabase-ready', r, { once: true }));
+
+      const user = await window.FWA_Auth.getUser();
+      const loggedIn = document.getElementById('loggedInBlock');
+      const loggedOut = document.getElementById('loggedOutBlock');
+
+      if (!user) {
+        loggedOut.style.display = 'block';
+        return;
+      }
+
+      loggedIn.style.display = 'block';
+      document.getElementById('accountTitle').textContent = 'Willkommen zurück' + (user.email ? ', ' + user.email : '');
+
+      // Profil laden
+      const profile = await window.FWA_Auth.getProfile();
+      const f = document.getElementById('profileForm');
+      if (profile) {
+        ['vorname','nachname','strasse','plz','ort','telefon'].forEach(k => {
+          if (f[k]) f[k].value = profile[k] || '';
+        });
+        if (f.newsletter) f.newsletter.checked = !!profile.newsletter;
+      }
+
+      // Profil speichern
+      f.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+          vorname:  f.vorname.value.trim(),
+          nachname: f.nachname.value.trim(),
+          strasse:  f.strasse.value.trim(),
+          plz:      f.plz.value.trim(),
+          ort:      f.ort.value.trim(),
+          telefon:  f.telefon.value.trim(),
+          newsletter: f.newsletter.checked
+        };
+        const r = document.getElementById('profileResult');
+        r.style.display = 'block';
+        r.style.color = 'inherit';
+        r.textContent = 'Wird gespeichert …';
+        const { error } = await window.FWA_Auth.updateProfile(payload);
+        if (error) {
+          r.style.color = '#c0392b';
+          r.textContent = 'Fehler beim Speichern.';
+        } else {
+          r.style.color = 'var(--color-accent)';
+          r.textContent = '✓ Gespeichert.';
+        }
+      });
+
+      // Logout
+      document.getElementById('logoutLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        window.FWA_Auth.signOut();
+      });
+
+      // Bestellungen
+      const ordersBlock = document.getElementById('ordersBlock');
+      const orders = await window.FWA_Auth.getOrders();
+      if (!orders.length) {
+        ordersBlock.innerHTML = '<p>Du hast bisher keine Bestellungen aufgegeben.</p>';
+      } else {
+        ordersBlock.innerHTML = orders.map(o => `
+          <details class="order">
+            <summary>
+              <strong>${o.bestellnummer}</strong>
+              &nbsp;·&nbsp; ${new Date(o.created_at).toLocaleDateString('de-DE')}
+              &nbsp;·&nbsp; ${Number(o.gesamt).toFixed(2).replace('.', ',')} €
+              &nbsp;·&nbsp; <em>${o.status}</em>
+            </summary>
+            <div class="order-detail">
+              <p>
+                Zahlart: ${o.zahlart === 'paypal' ? 'PayPal' : 'Vorkasse'}<br>
+                Lieferadresse: ${o.vorname || ''} ${o.nachname || ''}, ${o.strasse || ''}, ${o.plz || ''} ${o.ort || ''}
+              </p>
+              <table class="order-items">
+                <thead><tr><th>Art.-Nr.</th><th>Produkt</th><th>Menge</th><th>Preis</th><th>Summe</th></tr></thead>
+                <tbody>
+                  ${(o.order_items || []).map(i => `
+                    <tr>
+                      <td>${i.artikelnummer || '—'}</td>
+                      <td>${i.produkt_name}</td>
+                      <td>${i.menge}</td>
+                      <td>${Number(i.preis).toFixed(2).replace('.', ',')} €</td>
+                      <td>${Number(i.zwischensumme).toFixed(2).replace('.', ',')} €</td>
+                    </tr>`).join('')}
+                </tbody>
+              </table>
+            </div>
+          </details>
+        `).join('');
+      }
+    })();
+  </script>
+</body>
+</html>

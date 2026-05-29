@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Passwort vergessen – Form Werk Atelier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=2" />
+</head>
+<body>
+  <div data-fwa-header></div>
+
+  <section class="hero container" style="padding: 4rem 0 2rem;">
+    <p class="hero__eyebrow">Konto</p>
+    <h1>Passwort vergessen</h1>
+    <p>Gib deine E-Mail-Adresse ein – wir senden dir einen Link zum Zurücksetzen.</p>
+  </section>
+
+  <section class="section">
+    <div class="container container--narrow">
+
+      <div class="auth-card">
+        <form id="resetForm" class="checkout-form" novalidate>
+
+          <label>E-Mail-Adresse <span class="required">*</span>
+            <input name="email" type="email" required autocomplete="email" />
+            <small class="form-hint">An diese Adresse senden wir den Reset-Link, sofern ein Konto existiert.</small>
+          </label>
+
+          <p id="resetResult" class="form-message" style="display:none;"></p>
+
+          <button type="submit" class="btn btn--full">Reset-Link anfordern</button>
+
+        </form>
+      </div>
+
+      <p style="margin-top:1.5rem; text-align:center; font-size: 0.92rem; color: var(--color-text-soft);">
+        <a href="login.html">Zurück zur Anmeldung</a>
+      </p>
+
+    </div>
+  </section>
+
+  <div data-fwa-footer></div>
+
+  <script src="data/products.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    (function () {
+      const form = document.getElementById('resetForm');
+      const result = document.getElementById('resetResult');
+      form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        const email = form.email.value.trim();
+
+        result.style.display = 'block';
+        result.className = 'form-message';
+        result.textContent = 'E-Mail wird gesendet …';
+
+        if (!window.FWA_SUPABASE) await new Promise(r => window.addEventListener('fwa-supabase-ready', r, { once: true }));
+
+        const { error } = await window.FWA_Auth.resetPasswordEmail(email);
+        if (error) {
+          result.className = 'form-message form-message--error';
+          result.textContent = 'Fehler: ' + (error.message || 'Unbekannter Fehler');
+          return;
+        }
+        result.className = 'form-message form-message--success';
+        result.textContent = '✓ Falls ein Konto mit dieser Adresse existiert, haben wir dir gerade einen Reset-Link geschickt.';
+        form.reset();
+      });
+    })();
+  </script>
+</body>
+</html>

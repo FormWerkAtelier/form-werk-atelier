@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neues Passwort setzen – Form Werk Atelier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=2" />
+</head>
+<body>
+  <div data-fwa-header></div>
+
+  <section class="hero container" style="padding: 4rem 0 2rem;">
+    <p class="hero__eyebrow">Konto</p>
+    <h1>Neues Passwort setzen</h1>
+    <p>Wähle ein neues, sicheres Passwort.</p>
+  </section>
+
+  <section class="section">
+    <div class="container container--narrow">
+
+      <div class="auth-card">
+        <form id="newPwForm" class="checkout-form" novalidate>
+
+          <label>Neues Passwort <span class="required">*</span>
+            <input name="password" type="password" required minlength="8" autocomplete="new-password" />
+            <small class="form-hint">Mindestens 8 Zeichen. Empfohlen: Buchstaben, Zahlen und Sonderzeichen mischen.</small>
+          </label>
+
+          <label>Passwort wiederholen <span class="required">*</span>
+            <input name="password2" type="password" required minlength="8" autocomplete="new-password" />
+          </label>
+
+          <p id="newPwResult" class="form-message" style="display:none;"></p>
+
+          <button type="submit" class="btn btn--full">Passwort speichern</button>
+
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <div data-fwa-footer></div>
+
+  <script src="data/products.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    (function () {
+      const form = document.getElementById('newPwForm');
+      const result = document.getElementById('newPwResult');
+      form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        const pw1 = form.password.value;
+        const pw2 = form.password2.value;
+        if (pw1 !== pw2) {
+          result.style.display = 'block';
+          result.className = 'form-message form-message--error';
+          result.textContent = 'Die Passwörter stimmen nicht überein.';
+          return;
+        }
+
+        result.style.display = 'block';
+        result.className = 'form-message';
+        result.textContent = 'Passwort wird gespeichert …';
+
+        if (!window.FWA_SUPABASE) await new Promise(r => window.addEventListener('fwa-supabase-ready', r, { once: true }));
+
+        const { error } = await window.FWA_Auth.updatePassword(pw1);
+        if (error) {
+          result.className = 'form-message form-message--error';
+          result.textContent = 'Fehler: ' + (error.message || 'Unbekannter Fehler');
+          return;
+        }
+        result.className = 'form-message form-message--success';
+        result.textContent = '✓ Passwort erfolgreich geändert. Du wirst weitergeleitet …';
+        setTimeout(() => window.location.href = 'mein-konto.html', 1200);
+      });
+    })();
+  </script>
+</body>
+</html>
